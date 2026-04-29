@@ -1,3 +1,4 @@
+
 /*
 ESTO
 ES
@@ -48,7 +49,7 @@ ORDER BY "Milliseconds";
 -- SELECCIONAR TODAS LAS BOLETAS CUYO VALOR SUPERE LOS $10
 SELECT "Total"
 FROM "Invoice"
-WHERE "Total" > 10
+WHERE "Total" > 10;
 
 /* #########################
 ##### 2. OPERADORES ########
@@ -115,3 +116,69 @@ JOIN "Track" AS tra
 ON al."AlbumId" = tra."AlbumId"
 JOIN "Artist" AS ar
 ON al."ArtistId" = ar."ArtistId";
+
+-- Contar la cantidad de clientes según el país, y  generar un top 5
+SELECT "Country", COUNT(*) AS "Total"
+FROM "Customer"
+GROUP BY "Country"
+ORDER BY "Total" DESC
+LIMIT 5;
+
+-- Total de boletas por país
+SELECT "BillingCountry", COUNT(*) AS "Total"
+FROM "Invoice"
+GROUP BY "BillingCountry";
+
+-- Total de ventas en dolares
+SELECT "BillingCountry", SUM("Total") AS "Total"
+FROM "Invoice"
+GROUP BY "BillingCountry";
+
+-- Para cada genero musical, encontrar el total de pistas y duración promedio
+-- de las pistas
+SELECT genero."Name" AS Genero, COUNT(*) AS "Total", ROUND(AVG("Milliseconds"/60000),2) AS "Duracion"
+FROM "Genre" AS genero
+JOIN "Track" AS cancion
+ON genero."GenreId" = cancion."GenreId"
+GROUP BY genero."Name"
+HAVING ROUND(AVG("Milliseconds"/60000),2) < 5
+ORDER BY "Duracion" DESC;
+
+
+SELECT *
+FROM "Genre";
+
+SELECT *
+FROM "Track";
+
+-- SUB QUERYS
+--  Cual es el precio promedio de las boletas?
+SELECT ROUND(AVG("Total"), 2)
+FROM "Invoice";
+
+-- Facturas mayores al promedio 
+SELECT *
+FROM "Invoice"
+WHERE "Total" > (
+		SELECT ROUND(AVG("Total"), 2)
+		FROM "Invoice"
+);
+
+-- clientes que han gastado más que el promedio
+SELECT *
+FROM "Customer";
+
+SELECT *
+FROM "Invoice";
+
+SELECT cli."FirstName" AS Nombre, ROUND(AVG("Total"), 2) AS Promedio_Gastos
+FROM "Invoice" AS bol
+JOIN "Customer" AS cli
+ON cli."CustomerId" = bol."CustomerId"
+GROUP BY cli."CustomerId"
+HAVING ROUND(AVG("Total"), 2) > (
+		SELECT ROUND(AVG("Total"), 2)
+		FROM "Invoice"
+		
+)
+;
