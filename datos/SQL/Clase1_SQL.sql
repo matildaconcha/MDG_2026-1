@@ -178,7 +178,6 @@ ON cli."CustomerId" = bol."CustomerId"
 GROUP BY cli."CustomerId"
 HAVING ROUND(AVG("Total"), 2) > (
 		SELECT ROUND(AVG("Total"), 2)
-		FROM "Invoice"
-		
+		FROM "Invoice"		
 )
 ;
